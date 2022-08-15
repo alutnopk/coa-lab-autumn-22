@@ -8,16 +8,11 @@
 # Data Segment
 .data
 
-prompt1:
-    .asciiz "Enter first number:"
-prompt2:
-    .asciiz "Enter second number:"
-error_msg:
-    .asciiz "Invalid input."
-output:
-    .asciiz "Product of the two numbers are:"
-newline:
-    .asciiz "\n"
+prompt1: .asciiz "Enter first number:"
+prompt2: .asciiz "Enter second number:"
+error_msg: .asciiz "Invalid input."
+output: .asciiz "Product of the two numbers are:"
+newline: .asciiz "\n"
 
 # Text Segment
 .text
