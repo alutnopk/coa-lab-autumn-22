@@ -69,7 +69,15 @@ SWAP:
     jr $ra
 
 sort_array:
-    
+    move $s0, $a0
+    li $t0, 0
+    li $t1, 0
+    outer_loop:
+        inner_loop:
+
+            addiu $t1, 1, $t1
+        addiu $t0, 1, $t0
+    jr $ra
 
 find_k_largest:
 
