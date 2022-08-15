@@ -49,7 +49,7 @@ main:
     j error
     
     valid: # Sanity check passed
-
+    
     # in each iteration-
     # check lsb and prev lsb: perform (or don't perform) action
     # do ARS on product
