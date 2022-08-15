@@ -50,8 +50,8 @@ main:
 
     li $v0, 4
     la $a0, prompt_k
-    syscall
+    syscall # prints "Enter the value of k: "
 
     li $v0, 5
     syscall
-    sw $v0, $s0
+    sw $v0, $s0 # stores k in $s0
