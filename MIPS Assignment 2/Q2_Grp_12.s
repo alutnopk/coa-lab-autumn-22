@@ -54,15 +54,22 @@ main:
 
     li $v0, 5
     syscall
-    sw $v0, $a0 # stores k in $s0
+    move $a1, $v0 # stores k in $a1
+
+    la $a0, array
+    jal sort_array
+
+
 
 SWAP:
     lw $t0, ($a0)
     lw $t1, ($a1)
     sw $t0, ($a1)
     sw $t1, ($a0)
+    jr $ra
 
 sort_array:
+    
 
 find_k_largest:
 
