@@ -50,10 +50,8 @@ main:
     
     valid: # Sanity check passed
 
-    # between 0x00007FFF and 0xFFFF8000
-    # 17 bits needed
-    # in each pass
-    # check lsb and prev lsb: perform (or don't) action
+    # in each iteration-
+    # check lsb and prev lsb: perform (or don't perform) action
     # do ARS on product
     # do dis X times
     jal multiply_booth
