@@ -1,4 +1,10 @@
-# header
+#####
+# Assignment: 2
+# Problem: 1
+# Autumn Semester 2022
+# Group: 12
+# Members: Ashish Rekhani (20CS10010), Kartik Pontula (20CS10031)
+#####
 # Data Segment
 .data
 
@@ -49,7 +55,7 @@ main:
     j error
     
     valid: # Sanity check passed
-    
+
     # in each iteration-
     # check lsb and prev lsb: perform (or don't perform) action
     # do ARS on product
