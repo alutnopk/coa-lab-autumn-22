@@ -61,7 +61,7 @@ main:
 
 
 
-SWAP:
+SWAP: # swaps two numbers
     lw $t0, ($a0)
     lw $t1, ($a1)
     sw $t0, ($a1)
