@@ -9,16 +9,16 @@
 .globl main
 # Data Segment
 .data
-prompt_init: .asciiz "Enter 10 integers\n"
+array: .space 40
+prompt_init: .asciiz "Enter 10 integers"
 prompt_num: .asciiz "Enter Number "
 prompt_colon: .asciiz ": "
 prompt_k: .asciiz "Enter the value of k: "
 prompt_error: .asciiz "Error: Invalid value of k. Value of k should be between 1 and 10.\n"
 prompt_res: .asciiz "The kth largest number is: "
 newline: .asciiz "\n"
+prompt_sort: .asciiz "The array has been sorted successfully. The sorted array is: "
 space: .asciiz " "
-prompt_sort: .asciiz "The array has been sorted successfully.\n The sorted array is: "
-array: .space 40
 
 # Text Segment
 .text
@@ -52,8 +52,8 @@ main:
     jal sort_array
 
     # printing the sorted array
-    la $a0, prompt_sort
     li $v0, 4
+    la $a0, prompt_sort
     syscall 
 
     la $a0, array
@@ -64,12 +64,16 @@ main:
     li $v0, 4
     syscall
 
+    li $v0, 4
+    la $a0, newline
+    syscall
+
     # get_kth_largest function is called and the required integer is printed
     la $a0, array
     move $a1, $s1
     jal get_kth_largest
 
-    li $v0, 5
+    li $v0, 4
     la $a0, newline
     syscall
 
@@ -79,7 +83,7 @@ main:
 
 read_array:
     li $t0, 0
-    la $t1, array
+    li $t1, 0
     b array_loop
     
 array_loop:
@@ -98,7 +102,7 @@ array_loop:
 
     li $v0, 5
     syscall # accepts integer
-    sw $v0, 0($t1)
+    sw $v0, array($t1)
 
     addi $t0, $t0, 1 # increments counter
     addiu $t1, $t1, 4 # increments array pointer
@@ -129,40 +133,42 @@ get_kth_largest:
 # a1 : 10 (size of the array)
 # $t0: i
 # $t1: j
-# $t2 : 4*j
-# t3 : t2 + 4
+# $t2 : array
+# $t3 : t2 + 4
 
 sort_array:
     li $t0, 0 # counter i = 0
     li $t1, 0 # counter j = 0
-    li $t2, 0 # t2 = 4*j
-    addi $t3, $t2, 4 # t3 = t2 + 4
+    move $t2, $a0 # t2 = array
+    addiu $t3, $t2, 4 # t3 = t2 + 4
     b outer_loop
 
 outer_loop:
     addi $t0, $t0, 1 # increments i
     li $t1, 0 # counter j = 0
-    ble $t0, 10, inner_loop # if i < 10, go to inner_loop
+    ble $t0, 10, inner_loop # if i <= 10, go to inner_loop
+
     jr $ra # return back to main
 
 inner_loop:
-    add $t5, $t0, $t1 # t5 = i + j
-    bgt $t5, 9, outer_loop # if t5 > 9, go to outer_loop
+    add $t4, $t0, $t1 # t4 = i + j
+    bgt $t4, 10, outer_loop # if t4 > 9, go to outer_loop
 
-    lw $a0, array($t2)
-    lw $a1, array($t3)
-    bgt $a0, $a1, swap # if array[j] > array[j+1], go to swap
+    lw $t5, 0($t2)
+    lw $t6, 0($t3)
+    bgt $t5, $t6, SWAP # if array[j] > array[j+1], go to swap
+    b inner_loop_increments
 
 inner_loop_increments: 
     addi $t1, $t1, 1 # increments j
-    add $t2, $t2, $4 # t2 = 4*j
-    add $t3, $t3, $4 # t3 = 4*(j+1)
+    addiu $t2, $t2, 4 # t2 = 4*j
+    addiu $t3, $t3, 4 # t3 = 4*(j+1)
     j inner_loop # go to inner_loop
 
 SWAP:
-    sw $a1, array($t2) # array[j] = array[j+1]
-    sw $a0, array($t3) # array[j+1] = array[j]
-    b inner_loop_increments
+    sw $t6, 0($t2) # array[j] = array[j+1]
+    sw $t5, 0($t3) # array[j+1] = array[j]
+    j inner_loop_increments
 
 
 error_exit:
