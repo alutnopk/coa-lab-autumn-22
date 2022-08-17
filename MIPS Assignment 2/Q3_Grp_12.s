@@ -47,6 +47,18 @@ main:
     jal mallocInStack
     move $s5, $v0 # s5 is address of B
 
+    move $t0, $zero # counter i
+    mul $t1, $s0, $s1 # m*n
+    move $t2, $s2 # current element
+    move $t3, $s4 # pointer for A
+    populate_loop:
+        bge $t0, $t1, populate_exit
+        sw $t2, ($t3)
+
+        mul $t2, $t2, $s3 # next term of GP
+        addi $t3, $t3, 4 # increment pointer
+        addi $t0, $t0, 1 
+    populate_exit:
 initStack:
     addi $sp, $sp, -4
     sw $fp, ($sp)
