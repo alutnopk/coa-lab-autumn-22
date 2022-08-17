@@ -97,22 +97,21 @@ transposeMatrix:
     transpose_outer_loop:
         bge $t4, $a1, transpose_outer_exit # loop n times
         move $t5, $zero # t5 is j counter
+        move $t7, $t3 # t7 is offset
         transpose_inner_loop:
             bge $t5, $a0, transpose_inner_exit # loop m times
             lw $t6, ($t2) # current element is t6
-            move $t7, $t3 # t7 is offset
 
             sw $t6, ($t7) # assign element into B
 
-            addi $t2, $t2, 4
+            addi $t2, $t2, 4 # point to next element in A
+            mul $t8, $a1, 4
+            addi $t7, $t7, $t8 # increase B pointer by 4*n
             addi $t5, $t5, 1 # j++
         transpose_inner_exit:
-        li $v0, 4
-        la $a0, newline
-        syscall
-        move $a0, $t0
 
-        addi $t3, $t3, 1
+        addi $t3, $t3, 4
+        addi $t4, $t4, 1
     transpose_outer_exit:
     jr $ra
 
