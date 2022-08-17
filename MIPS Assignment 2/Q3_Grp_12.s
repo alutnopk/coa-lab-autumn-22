@@ -60,7 +60,8 @@ main:
 
         mul $t2, $t2, $s3 # next term of GP
         addi $t3, $t3, 4 # increment pointer
-        addi $t0, $t0, 1 
+        addi $t0, $t0, 1
+    b populate_loop
     populate_exit:
 
     # display A
@@ -136,6 +137,7 @@ printMatrix:
 
             addi $t2, $t2, 4
             addi $t4, $t4, 1
+        b print_inner_loop
         print_inner_exit:
         li $v0, 4
         la $a0, newline
@@ -143,12 +145,13 @@ printMatrix:
         move $a0, $t0
 
         addi $t3, $t3, 1
+    b print_outer_loop
     print_outer_exit:
     jr $ra
 
 transposeMatrix:
     move $t0, $a0 # copy of a0
-    mult $t1, $a0, $a1 # m*n
+    mul $t1, $a0, $a1 # m*n
     move $t2, $a2 # t2 is A pointer
     move $t3, $a3 # t3 is B pointer
     move $t4, $zero # t4 is i counter
@@ -166,12 +169,14 @@ transposeMatrix:
 
             addi $t2, $t2, 4 # point to next element in A
             mul $t8, $a1, 4
-            addi $t7, $t7, $t8 # increase B pointer by 4*n
+            add $t7, $t7, $t8 # increase B pointer by 4*n
             addi $t5, $t5, 1 # j++
+        b transpose_inner_loop
         transpose_inner_exit:
 
         addi $t3, $t3, 4
         addi $t4, $t4, 1
+    b transpose_outer_loop
     transpose_outer_exit:
     jr $ra
 
@@ -181,5 +186,4 @@ error:
     syscall
     li $v0, 10
     syscall
-
 
