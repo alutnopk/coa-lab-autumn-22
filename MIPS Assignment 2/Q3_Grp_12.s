@@ -11,6 +11,7 @@
 prompt_init: .asciiz "Enter four positive integers m, n, a and r: "
 blank_space: .asciiz " "
 newline: .asciiz "\n"
+error_msg: .asciiz "Invalid input. Please enter a positive number."
 # Text Segment
 .text
 .globl main
@@ -24,16 +25,23 @@ main:
     li $v0, 5
     syscall
     move $s0, $v0 # m
+    ble $s0, 0, error
     li $v0, 5
     syscall
     move $s1, $v0 # n
+    ble $s1, 0, error
     li $v0, 5
     syscall
     move $s2, $v0 # a
+    ble $s2, 0, error
     li $v0, 5
     syscall
     move $s3, $v0 # r
+    ble $s3, 0, error
 
+    mul $a0, $s0, $s1 # m*n
+    jal mallocInStack
+    move $
 
 initStack:
     addi $sp, $sp, -4
@@ -114,5 +122,12 @@ transposeMatrix:
         addi $t4, $t4, 1
     transpose_outer_exit:
     jr $ra
+
+error:
+    li $v0, 4
+    la $a0, error_msg
+    syscall
+    li $v0, 10
+    syscall
 
 
