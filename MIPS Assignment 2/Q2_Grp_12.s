@@ -10,7 +10,7 @@
 # Data Segment
 .data
 array: .space 40
-prompt_init: .asciiz "Enter 10 integers"
+prompt_init: .asciiz "Enter 10 integers\n"
 prompt_num: .asciiz "Enter Number "
 prompt_colon: .asciiz ": "
 prompt_k: .asciiz "Enter the value of k: "
@@ -51,22 +51,24 @@ main:
     li $a1, 10
     jal sort_array
 
-    # printing the sorted array
+    # successful sort prompt
     li $v0, 4
     la $a0, prompt_sort
     syscall 
 
+    # printing the sorted array
     la $a0, array
     jal print_arr
-
-    # printing the kth largest number
-    la $a0, prompt_res
-    li $v0, 4
-    syscall
 
     li $v0, 4
     la $a0, newline
     syscall
+
+    # printing the kth largest number
+    li $v0, 4
+    la $a0, prompt_res
+    syscall
+
 
     # get_kth_largest function is called and the required integer is printed
     la $a0, array
@@ -118,8 +120,7 @@ get_kth_largest:
     li $t0, -1
     add $t0, $t0, $a1 # t0 = k - 1
     mul $t0, $t0, 4 # $t0 = $t0 * 4
-    add $t0, $t0, $a0 # $t0 = $t0 + $a0
-    lw $t1, 0($t0) # $t1 = $t0[0]
+    lw $t1, array($t0) # $t1 = $t0[0]
 
     # printing the k-th largest integer
     li $v0, 1
@@ -152,12 +153,11 @@ outer_loop:
 
 inner_loop:
     add $t4, $t0, $t1 # t4 = i + j
-    bgt $t4, 10, outer_loop # if t4 > 9, go to outer_loop
+    bgt $t4, 10, outer_loop # if t4 > 10, go to outer_loop
 
     lw $t5, 0($t2)
     lw $t6, 0($t3)
     bgt $t5, $t6, SWAP # if array[j] > array[j+1], go to swap
-    b inner_loop_increments
 
 inner_loop_increments: 
     addi $t1, $t1, 1 # increments j
@@ -175,6 +175,7 @@ error_exit:
     li $v0, 4
     la $a0, prompt_error
     syscall
+
     li $v0, 10
     syscall
 
