@@ -87,6 +87,33 @@ printMatrix:
     jr $ra
 
 transposeMatrix:
+    move $t0, $a0 # copy of a0
+    mult $t1, $a0, $a1 # m*n
+    move $t2, $a2 # t2 is A pointer
+    move $t3, $a3 # t3 is B pointer
+    move $t4, $zero # t4 is i counter
+    move $t5, $zero # t5 is j counter
+
+    transpose_outer_loop:
+        bge $t4, $a1, transpose_outer_exit # loop n times
+        move $t5, $zero # t5 is j counter
+        transpose_inner_loop:
+            bge $t5, $a0, transpose_inner_exit # loop m times
+            lw $t6, ($t2) # current element is t6
+            move $t7, $t3 # t7 is offset
+
+            sw $t6, ($t7) # assign element into B
+
+            addi $t2, $t2, 4
+            addi $t5, $t5, 1 # j++
+        transpose_inner_exit:
+        li $v0, 4
+        la $a0, newline
+        syscall
+        move $a0, $t0
+
+        addi $t3, $t3, 1
+    transpose_outer_exit:
     jr $ra
 
 
