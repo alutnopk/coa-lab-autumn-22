@@ -63,15 +63,26 @@ printMatrix:
         print_inner_loop:
             bge $t4, $a1, print_inner_exit
             lw $t5, ($t2) # current element is t5
-            addi $t2, $t2, 4
 
             li $v0, 1
             move $a0, $t5
             syscall # prints current integer
             move $a0, $t0
 
+            li $v0, 4
+            la $a0, blank_space
+            syscall
+            move $a0, $t0
 
-            
+            addi $t2, $t2, 4
+            addi $t4, $t4, 1
+        print_inner_exit:
+        li $v0, 4
+        la $a0, newline
+        syscall
+        move $a0, $t0
+
+        addi $t3, $t3, 1
     print_outer_exit:
     jr $ra
 
