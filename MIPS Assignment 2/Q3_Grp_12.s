@@ -41,7 +41,11 @@ main:
 
     mul $a0, $s0, $s1 # m*n
     jal mallocInStack
-    move $
+    move $s4, $v0 # s4 is address of A
+
+    mul $a0, $s0, $s1 # m*n
+    jal mallocInStack
+    move $s5, $v0 # s5 is address of B
 
 initStack:
     addi $sp, $sp, -4
