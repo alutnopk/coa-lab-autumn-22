@@ -9,6 +9,8 @@
 # Data Segment
 .data
 prompt_init: .asciiz "Enter four positive integers m, n, a and r: "
+prompt_A: .asciiz "Matrix A:\n"
+prompt_B: .asciiz "Matrix B:\n"
 blank_space: .asciiz " "
 newline: .asciiz "\n"
 error_msg: .asciiz "Invalid input. Please enter a positive number."
@@ -47,6 +49,7 @@ main:
     jal mallocInStack
     move $s5, $v0 # s5 is address of B
 
+    # populate A with GP
     move $t0, $zero # counter i
     mul $t1, $s0, $s1 # m*n
     move $t2, $s2 # current element
@@ -59,6 +62,39 @@ main:
         addi $t3, $t3, 4 # increment pointer
         addi $t0, $t0, 1 
     populate_exit:
+
+    # display A
+    li $v0, 4
+    la $a0, prompt_A
+    syscall
+    move $a0, $s0
+    move $a1, $s1
+    move $a2, $s4
+    jal printMatrix
+
+    # find transpose of A 
+    move $a0, $s0
+    move $a1, $s1
+    move $a2, $s4
+    move $a3, $s5
+    jal transposeMatrix
+
+    # display B
+    li $v0, 4
+    la $a0, prompt_B
+    syscall
+    move $a0, $s0
+    move $a1, $s1
+    move $a2, $s5
+    jal printMatrix
+
+    mul $t0, $s0, $s1
+    mul $t0, $t0, 8
+    add $sp, $sp, $t0
+
+    li $v0, 10
+    syscall
+    
 initStack:
     addi $sp, $sp, -4
     sw $fp, ($sp)
