@@ -23,11 +23,28 @@ main:
     move $s0, $v0 # m
     li $v0, 5
     syscall
-    move $s0, $v0 # n
+    move $s1, $v0 # n
     li $v0, 5
     syscall
-    move $s0, $v0 # a
+    move $s2, $v0 # a
     li $v0, 5
     syscall
-    move $s0, $v0 # r
-    
+    move $s3, $v0 # r
+
+
+initStack:
+    jr $ra
+
+pushToStack:
+    jr $ra
+
+mallocInStack:
+    jr $ra
+
+printMatrix:
+    jr $ra
+
+transposeMatrix:
+    jr $ra
+
+
