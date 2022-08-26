@@ -1,0 +1,19 @@
+half adder 
+Pad to Pad 
+ ---------------+---------------+---------+ 
+ Source Pad     |Destination Pad|  Delay  | 
+ ---------------+---------------+---------+ 
+ a              |c_out          |    6.459| 
+ a              |sum            |    6.724| 
+ b              |c_out          |    6.388| 
+ b              |sum            |    6.621| 
+ ---------------+---------------+---------+ 
+  Maximum combinational path delay: 1.066ns
+
+full adder
+
+8bit
+Maximum combinational path delay: 3.471ns
+
+16bit 
+Maximum combinational path delay: 6.167ns
