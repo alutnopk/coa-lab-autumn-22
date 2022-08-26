@@ -20,3 +20,6 @@ Maximum combinational path delay: 6.167ns
 
 32 bit
 Maximum combinational path delay: 11.559ns
+
+64 bit
+Maximum combinational path delay: 22.343ns
