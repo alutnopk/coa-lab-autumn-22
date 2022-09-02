@@ -28,9 +28,9 @@ main:
 
     li $v0, 4
     la $a0, prompt2
-    syscall # Prompts for 1st number
+    syscall # Prompts for 2nd number
     li $v0, 5
-    syscall # Accepts 1st number
+    syscall # Accepts 2nd number
     move $a1, $v0
 
     # Sanity check
