@@ -121,9 +121,9 @@ main:
 	move $sp, $fp
 	llw $fp, ($sp)
 	addi $sp, 4
-	jr $ra
-	# li $v0, 10
-	# syscall
+	# jr $ra
+	li $v0, 10
+	syscall
 initStack:
 	addi $sp, $sp, -4
 	sw $fp, ($sp)
