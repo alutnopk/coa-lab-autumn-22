@@ -10,7 +10,7 @@
 .data
 prompt1: .asciiz "Enter four positive integers (n, a, r, and m): "
 prompt2: .asciiz "Array A is:\n"
-final_result: .asciiz "Final determinant of the matrix A is "
+final_result: .asciiz "\nFinal determinant of the matrix A is "
 newline: .asciiz "\n"
 error_msg: .asciiz "Entered integers should be positive.\n"
 
@@ -102,6 +102,8 @@ main:
 	lw $a0, -8($fp) # n is 1st argument
 	move $a1, $s0 # address of A[0] is 2nd argument
 	jal printMatrix
+
+
 
 initStack:
 	addi $sp, $sp, -4
