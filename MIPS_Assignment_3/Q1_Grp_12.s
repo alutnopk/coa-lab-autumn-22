@@ -140,11 +140,7 @@ mallocInStack:
     sub $sp, $sp, $t0
     move $v0, $sp
     jr $ra
-
-popFromStack:
-    lw $v0, ($sp)
-	# addi $sp, $sp, 4
-
+	
 printMatrix:
     move $t0, $a0
     move $t1, $a0
