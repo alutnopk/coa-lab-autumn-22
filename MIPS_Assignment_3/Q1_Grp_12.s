@@ -73,7 +73,7 @@ main:
 	lw $t3, -16($fp) # t3 = r
 	lw $t4, -20($fp) # t4 = m
 	move $t5, $zero
-	# loop register description
+	# loop description
 	# t0: stores n^2
 	# t1: stores address of A[i]
 	# t2: stores current term
