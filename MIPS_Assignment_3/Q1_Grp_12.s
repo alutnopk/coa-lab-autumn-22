@@ -64,10 +64,34 @@ main:
 	lw $t0, -8($fp)
 	mult $t0, $t0
 	mflo $a0
-	jal mallocInStack
+	jal mallocInStack # allocate 4 * n^2 bytes in stack
 	move $s0, $v0 # save address of array in $s0
 
 	move $t0, $a0 # t0 stores n^2
+	move $t1, $s0 # t1 stores address of A[0]
+	lw $t2, -12($fp) # t2 = a
+	lw $t3, -16($fp) # t3 = r
+	lw $t4, -20($fp) # t4 = m
+	move $t5, $zero
+	# loop register description
+	# t0: stores n^2
+	# t1: stores address of A[i]
+	# t2: stores current term
+	# t3: stores r
+	# t4: stores m
+	# t5: loop index
+
+	populate_loop:
+	beq $t5, $t0, populate_loop_end
+
+	sw $t2, ($t1)
+
+	mul $t2, $t2, $t3
+	div $t2, $t4
+	mfhi $t2
+	addi $t1, $t1, 4
+	addi $t5, $t5, 1
+	populate_loop_end:
 
 
 initStack:
