@@ -103,8 +103,27 @@ main:
 	move $a1, $s0 # address of A[0] is 2nd argument
 	jal printMatrix
 
+	lw $a0, -8($fp)
+	move $a1, $s0
+	jal recursiveDet
 
+	move $t0, $v0
 
+	li $v0, 4
+    la $a0, final_result
+    syscall
+
+    li $v0, 1
+    move $a0, $t0       # printing determinant of matrix
+    syscall
+
+	lw $ra, -4($fp)
+	move $sp, $fp
+	llw $fp, ($sp)
+	addi $sp, 4
+	jr $ra
+	# li $v0, 10
+	# syscall
 initStack:
 	addi $sp, $sp, -4
 	sw $fp, ($sp)
@@ -162,6 +181,8 @@ printMatrix:
     print_outer_exit:
     jr $ra
 
+recursiveDet:
+	
 error_input:
 	li $v0, 4
 	la $a0, error_msg
