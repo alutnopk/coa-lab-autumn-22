@@ -9,6 +9,7 @@
 
 .data
 prompt1: .asciiz "Enter four positive integers (n, a, r, and m): "
+prompt2: .asciiz "Array A is:\n"
 final_result: .asciiz "Final determinant of the matrix A is "
 newline: .asciiz "\n"
 error_msg: .asciiz "Entered integers should be positive.\n"
@@ -73,7 +74,7 @@ main:
 	lw $t3, -16($fp) # t3 = r
 	lw $t4, -20($fp) # t4 = m
 	move $t5, $zero
-	# loop description
+	# populate_loop description
 	# t0: stores n^2
 	# t1: stores address of A[i]
 	# t2: stores current term
@@ -91,8 +92,16 @@ main:
 	mfhi $t2
 	addi $t1, $t1, 4
 	addi $t5, $t5, 1
+	j populate_loop
 	populate_loop_end:
 
+	li $v0, 4
+	li $a0, prompt2
+	syscall
+
+	lw $a0, -8($fp) # n is 1st argument
+	move $a1, $s0 # address of A[0] is 2nd argument
+	jal printMatrix
 
 initStack:
 	addi $sp, $sp, -4
@@ -115,6 +124,41 @@ popFromStack:
     lw $v0, ($sp)
 	# addi $sp, $sp, 4
 
+printMatrix:
+    move $t0, $a0
+    move $t1, $a0
+    move $t2, $a1 # current pointer is t2
+    move $t3, $zero # counter i is t3
+    print_outer_loop:
+        bge $t3, $a0, print_outer_exit
+        move $t4, $zero # counter j is t4
+        print_inner_loop:
+            bge $t4, $a0, print_inner_exit
+            lw $t5, ($t2) # current element is t5
+
+            li $v0, 1
+            move $a0, $t5
+            syscall # prints current integer
+            move $a0, $t0
+
+            li $v0, 4
+            la $a0, blank_space
+            syscall
+            move $a0, $t0
+
+            addi $t2, $t2, 4
+            addi $t4, $t4, 1
+        b print_inner_loop
+        print_inner_exit:
+        li $v0, 4
+        la $a0, newline
+        syscall
+        move $a0, $t0
+
+        addi $t3, $t3, 1
+    b print_outer_loop
+    print_outer_exit:
+    jr $ra
 
 error_input:
 	li $v0, 4
