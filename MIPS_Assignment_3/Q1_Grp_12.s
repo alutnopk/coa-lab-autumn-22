@@ -33,38 +33,38 @@ main:
     jal pushToStack # $ra stored in -4($fp)
 
 	li $v0, 4
-	li $a0, prompt1
+	li $a0, prompt1		# prints the prompt to get input
 	syscall
 
 
 	li $v0, 5
     syscall # Accepts n
     move $a0, $v0
-	blez $a0, error_input #sanity check
+	blez $a0, error_input # sanity check
 	jal pushToStack # n stored in -8($fp)
 
 	li $v0, 5
     syscall # Accepts a
     move $a0, $v0
-	blez $a0, error_input #sanity check
+	blez $a0, error_input # sanity check
 	jal pushToStack # a stored in -12($fp)
 
 	li $v0, 5
     syscall # Accepts r
     move $a0, $v0
-	blez $a0, error_input #sanity check
+	blez $a0, error_input # sanity check
 	jal pushToStack # r stored in -16($fp)
 
 	li $v0, 5
     syscall # Accepts m
     move $a0, $v0
-	blez $a0, error_input #sanity check
+	blez $a0, error_input # sanity check
 	jal pushToStack # m stored in -20($fp)
 
 	lw $t0, -8($fp)
 	mult $t0, $t0
-	mflo $a0
-	jal mallocInStack # allocate 4 * n^2 bytes in stack
+	mflo $a0			# a0 stores value n*n
+	jal mallocInStack 	# allocate 4 * n^2 bytes in stack
 	move $s0, $v0 # save address of array in $s0
 
 	move $t0, $a0 # t0 stores n^2
@@ -81,47 +81,52 @@ main:
 	# t4: stores m
 	# t5: loop index
 
-	populate_loop:
+populate_loop:
 	beq $t5, $t0, populate_loop_end
 
-	sw $t2, ($t1)
+	sw $t2, 0($t1)		# value t2 is stores in location t1
 
-	mul $t2, $t2, $t3
+	mul $t2, $t2, $t3	# $t2 = $t2 * $t3 
 	div $t2, $t4
-	mfhi $t2
-	addi $t1, $t1, 4
-	addi $t5, $t5, 1
+	mfhi $t2			# $t2 = $t2 % $t4
+	addi $t1, $t1, 4	# pointer is incremented to next address
+	addi $t5, $t5, 1	# loop index is incremented
 	j populate_loop
-	populate_loop_end:
+
+populate_loop_end:
 
 	li $v0, 4
-	li $a0, prompt2
+	li $a0, prompt2		# prints "Array A is:\n"
 	syscall
 
-	lw $a0, -8($fp) # n is 1st argument
-	move $a1, $s0 # address of A[0] is 2nd argument
+	lw $a0, -8($fp) 	# n is 1st argument
+	move $a1, $s0		# address of A[0] is 2nd argument
 	jal printMatrix
 
-	lw $a0, -8($fp)
-	move $a1, $s0
+	lw $a0, -8($fp)		# n is the first argument
+	move $a1, $s0		# Address og A[0] is 2nd argument
 	jal recursiveDet
 
-	move $t0, $v0
+	move $t0, $v0		# $t0 stores the return value from recursiveDet
 
 	li $v0, 4
-    la $a0, final_result
+    la $a0, final_result	# prompt "Final Determinant of matrix is: "
     syscall
 
     li $v0, 1
     move $a0, $t0       # printing determinant of matrix
     syscall
 
-	main_end:
-	lw $ra, -4($fp)
-	move $sp, $fp
-	llw $fp, ($sp)
-	addi $sp, 4
-	jr $ra
+main_end:
+
+	lw $ra, -4($fp)		# return address is restored from the stack 
+	addi $sp, $sp, 4	# stack is popped
+	lw $fp, 0($sp)
+	addi $sp, $sp, 4	# restore stack pointer
+	# jr $ra
+
+	li $v0, 10
+	sycall # exit the function
 
 
 initStack:
@@ -140,21 +145,22 @@ mallocInStack:
     sub $sp, $sp, $t0
     move $v0, $sp
     jr $ra
+
 printMatrix:
-    move $t0, $a0
-    move $t1, $a0
-    move $t2, $a1 # current pointer is t2
+    move $t0, $a0	# t0 stores n
+    move $t1, $a0	# t1 stores n
+    move $t2, $a1 	# current pointer is t2
     move $t3, $zero # counter i is t3
     print_outer_loop:
         bge $t3, $a0, print_outer_exit
-        move $t4, $zero # counter j is t4
+        move $t4, $zero # counter j is t4. j is set to 0 at the start of outer loop
         print_inner_loop:
             bge $t4, $a0, print_inner_exit
-            lw $t5, ($t2) # current element is t5
+            lw $t5, ($t2) 	# current element is t5
 
             li $v0, 1
             move $a0, $t5
-            syscall # prints current integer
+            syscall 		# prints current integer
             move $a0, $t0
 
             li $v0, 4
@@ -162,8 +168,8 @@ printMatrix:
             syscall
             move $a0, $t0
 
-            addi $t2, $t2, 4
-            addi $t4, $t4, 1
+            addi $t2, $t2, 4	# pointer is incremented
+            addi $t4, $t4, 1	# j is incremented
         j print_inner_loop
         print_inner_exit:
         li $v0, 4
@@ -176,12 +182,15 @@ printMatrix:
     print_outer_exit:
     jr $ra
 
+# Register legend for recursiveDet:
+# $a0: n
+# $a1: address of array
+ 
 recursiveDet:
-	# a0 is n, a1 is address of array
-	move $t0, $a0
-	move $a0, $ra
+	move $t0, $a0	# temporarily storing array address in $t0
+	move $a0, $ra	# old return address is pushed in the stack (fp - 4)
 	jal pushToStack
-	move $a0, $s0
+	move $a0, $s0	# 
 	jal pushToStack
 	move $a0, $s1
 	jal pushToStack
@@ -191,8 +200,8 @@ recursiveDet:
 	jal pushToStack
 	move $s0, $t0 # n
 	move $s1, $a1 # address of A
-	li $s2, 0 # skip column counter
-	li $s3, 0 # determinant
+	move $s2, $zero # skip column counter
+	move $s3, $zero # determinant
 	# s0: n
 	# s1: &A
 	bne $s0, 1, not_one
@@ -236,7 +245,7 @@ recursiveDet:
 		move $t4, $t2 # j' = j-1
 
 		beq $t2, $s2, skip # if j'==j, skip column
-		blt $t1, $a3, populate_submat
+		blt $t1, $s2, populate_submat
 		addi $t4, $t4, -1 # j'--
 
 		populate_submat:
