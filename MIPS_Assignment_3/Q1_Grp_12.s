@@ -13,7 +13,7 @@ prompt2: .asciiz "Array A is:\n"
 final_result: .asciiz "\nFinal determinant of the matrix A is "
 newline: .asciiz "\n"
 error_msg: .asciiz "Entered integers should be positive.\n"
-
+blank_space: .asciiz " "
 .text
 .globl main
 
@@ -140,7 +140,6 @@ mallocInStack:
     sub $sp, $sp, $t0
     move $v0, $sp
     jr $ra
-	# sdabfhjdbge
 printMatrix:
     move $t0, $a0
     move $t1, $a0
@@ -165,7 +164,7 @@ printMatrix:
 
             addi $t2, $t2, 4
             addi $t4, $t4, 1
-        b print_inner_loop
+        j print_inner_loop
         print_inner_exit:
         li $v0, 4
         la $a0, newline
@@ -178,7 +177,23 @@ printMatrix:
     jr $ra
 
 recursiveDet:
-	
+	# a0 is n, a1 is address of array
+	move $t0, $a0
+	move $a0, $ra
+	jal pushToStack
+	# move $a0, $s0
+	# jal pushToStack
+	# move $a0, $s1
+	# jal pushToStack
+	# move $a0, $s2
+	# jal pushToStack
+	# move $a0, $s3
+	# jal pushToStack
+	move $t0, $a0 
+	move $t1, $a1
+	# t0: n
+	# t1: 
+	bne 
 error_input:
 	li $v0, 4
 	la $a0, error_msg
