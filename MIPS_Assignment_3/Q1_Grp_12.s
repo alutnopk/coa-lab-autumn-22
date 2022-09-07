@@ -126,7 +126,7 @@ main_end:
 	jr $ra
 
 	li $v0, 10
-	sycall # exit the function
+	syscall # exit the function
 
 
 initStack:
