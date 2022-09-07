@@ -98,7 +98,9 @@ main:
 	li $a0, prompt2
 	syscall
 
-	lw $a0, -8($fp) # n is 1st argument
+	lw $t0, -8($fp)
+	mult $t0, $t0
+	mflo $a0 # n*n is 1st argument
 	move $a1, $s0 # address of A[0] is 2nd argument
 	jal printMatrix
 
