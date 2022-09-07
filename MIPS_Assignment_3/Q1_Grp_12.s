@@ -13,7 +13,7 @@ prompt2: .asciiz "Array A is:\n"
 final_result: .asciiz "\nFinal determinant of the matrix A is "
 newline: .asciiz "\n"
 error_msg: .asciiz "Entered integers should be positive.\n"
-
+blank_space: .asciiz " "
 .text
 .globl main
 
@@ -140,7 +140,6 @@ mallocInStack:
     sub $sp, $sp, $t0
     move $v0, $sp
     jr $ra
-	
 printMatrix:
     move $t0, $a0
     move $t1, $a0
@@ -165,7 +164,7 @@ printMatrix:
 
             addi $t2, $t2, 4
             addi $t4, $t4, 1
-        b print_inner_loop
+        j print_inner_loop
         print_inner_exit:
         li $v0, 4
         la $a0, newline
@@ -178,6 +177,93 @@ printMatrix:
     jr $ra
 
 recursiveDet:
+	# a0 is n, a1 is address of array
+	move $t0, $a0
+	# move $a0, $ra
+	# jal pushToStack
+	move $a0, $s0
+	jal pushToStack
+	move $a0, $s1
+	jal pushToStack
+	move $a0, $s2
+	jal pushToStack
+	move $a0, $s3
+	jal pushToStack
+	move $s0, $t0 # n
+	move $s1, $a1 # address of A
+	li $s2, 0 # skip column counter
+	li $s3, 0 # determinant
+	# s0: n
+	# s1: &A
+	bne $s0, 1, not_one
+	# base case: A has one element
+	lw $v0, ($s1)
+	# reloading old register values from memory
+	# lw $ra, 16($sp)
+	lw $s0, 12($sp)
+	lw $s1, 8($sp)
+	lw $s2, 4($sp)
+	lw $s3, 0($sp)
+	addi $sp, $sp, 20
+	jr $ra
+
+	not_one: # recursive procedure begins
+	recursion_loop:
+	addi $t0, $s0, -1
+	mult $t0, $t0
+	mflo $a0 # stores (n-1)^2
+	jal mallocInStack
+	move $t0, $v0
+
+	# s0: n
+	# s1: matrix address
+	# s2: column number to be skipped
+	# s3: det
+	# t0: submatrix address
+	# s1, t0, s0, s2
+	# t1: i
+	# t2: j
+	# t3: i'
+	# t4: j'
+	li $t1, 1 # i
+	li $t2, 0 # j
+
+	submatrix_outer:
+	beq $t1, $s0, submatrix_outer_end
+	submatrix_inner:
+		beq $t2, $s0, submatrix_inner_end
+		addi $t3, $t1, -1 # i' = i-1
+		move $t4, $t2 # j' = j-1
+
+		beq $t2, $s2, skip # if j'==j, skip column
+		blt $t1, $a3, populate_submat
+		addi $t4, $t4, -1 # j'--
+
+		populate_submat:
+		mult $t1, $s0 # n*i
+		mflo $t5
+		add $t5, $t5, $t2 # n*i + j
+		sll $t5, $t5, 2 # 4*(n*i+j)
+		add $t5, $t5, $s1 # address of A[i][j]
+		lw $t5, ($t5) # t5 = A[i][j]
+
+		addi $t6, $s0, -1
+		mult $t6, $t3
+		mflo $t6 # i'*(n-1)
+		add $t6, $t6, $t4
+		sll $t6, $t6, 2 # 4*i'*(n-1)
+		add $t6, $t6, $t0 # t6 = &submat[i'][j']
+
+		sw $t5, ($t6) # submat[i'][j'] = A[i][j]
+		skip:
+		addi $t2, $t2, 1
+		j submatrix_inner
+	submatrix_inner_end:
+	addi $t1, $t1, 1
+	li $t2, 0
+	submatrix_outer_end:
+
+	# submatrix has been populated
 	
 error_input:
 	li $v0, 4
