@@ -12,7 +12,7 @@ prompt1: .asciiz "Enter four positive integers (n, a, r, and m): "
 prompt2: .asciiz "Array A is:\n"
 final_result: .asciiz "\nFinal determinant of the matrix A is "
 newline: .asciiz "\n"
-error_msg: .asciiz "Entered integers should be positive.\n"
+error_msg: .asciiz "Entered integers should be positive. Restart the program to try again.\n"
 blank_space: .asciiz " "
 .text
 .globl main
@@ -23,7 +23,6 @@ blank_space: .asciiz " "
 # r: -16($fp)
 # m: -20(%fp)
 # matrix address: $s4
-# determinant value: $s5
 
 main:
 	move $s0, $ra
@@ -117,13 +116,14 @@ main:
     move $a0, $t0       # printing determinant of matrix
     syscall
 
+	main_end:
 	lw $ra, -4($fp)
 	move $sp, $fp
 	llw $fp, ($sp)
 	addi $sp, 4
-	# jr $ra
-	li $v0, 10
-	syscall
+	jr $ra
+
+
 initStack:
 	addi $sp, $sp, -4
 	sw $fp, ($sp)
@@ -136,7 +136,7 @@ pushToStack:
     jr $ra
 
 mallocInStack:
-    sll $t0, $a0, 2
+    sll $t0, $a0, 2 # allot 4 bytes per integer
     sub $sp, $sp, $t0
     move $v0, $sp
     jr $ra
@@ -307,10 +307,8 @@ error_input:
 	li $v0, 4
 	la $a0, error_msg
 	syscall
+	j main_end
 
-exit_function:
-	li $v0, 10
-	syscall
 
 
 
