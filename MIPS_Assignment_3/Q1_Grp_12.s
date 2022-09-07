@@ -33,7 +33,7 @@ main:
     jal pushToStack # $ra stored in -4($fp)
 
 	li $v0, 4
-	li $a0, prompt1		# prints the prompt to get input
+	la $a0, prompt1		# prints the prompt to get input
 	syscall
 
 
@@ -96,7 +96,7 @@ populate_loop:
 populate_loop_end:
 
 	li $v0, 4
-	li $a0, prompt2		# prints "Array A is:\n"
+	la $a0, prompt2		# prints "Array A is:\n"
 	syscall
 
 	lw $a0, -8($fp) 	# n is 1st argument
