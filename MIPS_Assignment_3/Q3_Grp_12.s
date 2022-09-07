@@ -66,8 +66,8 @@ read_array_loop:
     
 
     # printing the input array
-    ; la $a0, array
-    ; jal print_array
+    # la $a0, array
+    # jal print_array
 
     li $v0, 4
     la $a0, prompt_key

@@ -63,8 +63,8 @@ read_array_loop:
     
 
     # printing the input array
-    ; la $a0, array
-    ; jal print_array
+    # la $a0, array
+    # jal print_array
 
     la $a0, array   # load array address in $a0
     li $a1, 0   # load start index in $a1
