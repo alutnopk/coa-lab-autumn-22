@@ -33,7 +33,7 @@ main:
     jal pushToStack # $ra stored in -4($fp)
 
 	li $v0, 4
-	la $a0, prompt1		# prints the prompt to get input
+	li $a0, prompt1		# prints the prompt to get input
 	syscall
 
 
@@ -96,7 +96,7 @@ populate_loop:
 populate_loop_end:
 
 	li $v0, 4
-	la $a0, prompt2		# prints "Array A is:\n"
+	li $a0, prompt2		# prints "Array A is:\n"
 	syscall
 
 	lw $a0, -8($fp) 	# n is 1st argument
@@ -120,13 +120,13 @@ populate_loop_end:
 main_end:
 
 	lw $ra, -4($fp)		# return address is restored from the stack 
-	addi $sp, $sp, 4	# stack is popped
+	move $sp, $fp	# stack is popped
 	lw $fp, 0($sp)
 	addi $sp, $sp, 4	# restore stack pointer
-	# jr $ra
+	jr $ra
 
 	li $v0, 10
-	syscall # exit the function
+	sycall # exit the function
 
 
 initStack:
@@ -185,14 +185,14 @@ printMatrix:
 # Register legend for recursiveDet:
 # $a0: n
 # $a1: address of array
- 
+
 recursiveDet:
 	move $t0, $a0	# temporarily storing array address in $t0
 	move $a0, $ra	# old return address is pushed in the stack (fp - 4)
 	jal pushToStack
-	move $a0, $s0	# 
+	move $a0, $s0	# address of array is pushed into stack
 	jal pushToStack
-	move $a0, $s1
+	move $a0, $s1	# 
 	jal pushToStack
 	move $a0, $s2
 	jal pushToStack
@@ -206,7 +206,7 @@ recursiveDet:
 	# s1: &A
 	bne $s0, 1, not_one
 	# base case: A has one element
-	lw $v0, ($s1)
+	lw $v0, 0($s1)
 	# reloading old register values from memory
 	lw $ra, 16($sp)
 	lw $s0, 12($sp)
@@ -274,7 +274,7 @@ recursiveDet:
 
 	# submatrix has been populated
 	addi $a0, $s0, -1
-	move $a1, $t0
+	move $a1, $v0
 	jal recursiveDet
 
 	addi $t1, $s0, -1   # t1 = n - 1
