@@ -1,6 +1,6 @@
 #####
 # Assignment: 3
-# Problem: 1
+# Problem: 3
 # Autumn Semester 2022
 # Group: 12
 # Members: Ashish Rekhani (20CS10010), Kartik Pontula (20CS10031)
@@ -9,14 +9,14 @@
 
 .data
 array: .space 40
-array: .space 40
 prompt_init: .asciiz "Enter 10 integers\n"
 prompt_key: .asciiz "Enter the value of key: "
+prompt_key_confirm: .asciiz "The key to be searched is: "
 prompt_num: .asciiz "Enter Number "
 prompt_colon: .asciiz ": "
 prompt_sortsuccess: .asciiz "Sorted Array: "
 space: .asciiz " "
-prompt_searchsuccess: .asciiz " is FOUND in the array at index "
+prompt_searchsuccess: .asciiz " is FOUND in the array at index (0-based indexing) "
 prompt_searchfail: .asciiz " NOT FOUND in the array.\n";
 newline: .asciiz "\n"
 
@@ -66,8 +66,8 @@ read_array_loop:
     
 
     # printing the input array
-    la $a0, array
-    jal print_array
+    ; la $a0, array
+    ; jal print_array
 
     li $v0, 4
     la $a0, prompt_key
@@ -83,12 +83,24 @@ read_array_loop:
     jal recursive_sort  # recursive sort function is called
 
     li $v0, 4
-    la $a0, prompt_success
+    la $a0, prompt_sortsuccess
     syscall
 
     # The sorted array is printed
     la $a0, array
     jal print_array
+
+    ; li $v0, 4
+    ; la $a0, prompt_key_confirm
+    ; syscall
+
+    ; li $v0, 1
+    ; move $a0, $s2
+    ; syscall
+
+    ; li $v0, 4
+    ; la $a0, newline
+    ; syscall
 
     # The key is searched in the array
     la $a0, array   # load array address in $a0
@@ -97,121 +109,138 @@ read_array_loop:
     move $a3, $s2   # load key in $a3
     jal recursive_search  # recursive search function is called
 
-    lw $fp, 0($sp)  # restore frame pointer
-    addi $sp, $sp, 4    # restore stack pointer
+    move $s3, $v0   # the result is stored in $s3
+    beq $s3, -1, search_fail # if the result is -1, the key is not found
 
-    # exit from the function
-    li $v0, 10
+    li $v0, 1
+    move $a0, $s2
     syscall 
 
+    li $v0, 4
+    la $a0, prompt_searchsuccess
+    syscall
 
+    li $v0, 1
+    move $a0, $s3   # the index of the key is printed
+    syscall 
+
+    li $v0, 4
+    la $a0, newline
+    syscall
+
+    b function_end
 
 # register legend for recursive_search:
 # $a0: array
 # $a1: start index
 # $a2: end index
 # $a3: key
-# $s0: mid1 index
-# $s1: value at mid index
-# $s2: mid2 index
-# $s3: value at mid2 index
 
 recursive_search:
-    move $t0, $ra
-    jal init_stack
-    move $t1, $a0   # store array address in $t1
+    move $t0, $ra   # temporarily storing return address in $t0
+    jal init_stack  # initialising stack
+    move $t1, $a0   # temporarily storing array address in $t1
 
-    move $a0, $t0   # store old return address in (fp - 4)
-    jal init_stack
-    move $a0, $t1   # restore array address in (fp - 8)
-    jal init_stack
-    move $a0, $a1   # restore start index in (fp - 12)
-    jal init_stack
-    move $a0, $a2   # restore end index in (fp - 16)
-    jal init_stack
-    move $a0, $a3   # restore key in (fp - 20)
-    jal init_stack
-    move $a0, $s0   # restore mid1 index in (fp - 24)
-    jal init_stack
-    move $a0, $s1   # restore value at mid index in (fp - 28)
-    jal init_stack
+    move $a0, $t0   # old return address is push in stack (fp - 4)
+    jal pushToStack
 
-    move $a0, $t1   # restore array address in $a0
+    move $a0, $t1   # restore array address back in $a0
+    li $v0, -1      # return value of the function is set to -1 as default
 
+    # while start <= end
+    bgt $a1, $a2, recursive_search_end # if start index > end index, key is not found
 
-# while start <= end
-recursive_search_loop:
-    bgt $a1, $a2, search_fail # if start index > end index, key is not found
+    # mid1 = start + (end - start) / 3
+    li $t5, 3
+    sub $t0, $a2, $a1   # t0 = end - start
+    div $t0, $t5       # t0 = t0 / 3
+    mflo $t0            # t0 = quotient
+    add $t1, $a1, $t0   # t1 = start + t0 = mid1
+    sub $t2, $a2, $t0   # t2 = end - t0 = mid2
 
-recursive_search_body:
-    # mid 1 = start + (end - start)/3
-    sub $s0, $a2, $a1
-    div $s0, 3
-    mflo $s0
-    add $s0, $s0, $a1
+    sll $t3, $t1, 2     # t3 = 4 * mid1 
+    add $t3, $t3, $a0   # t3 = array + 4 * mid1
+    lw $t3, 0($t3)      # t3 = array[mid1]
 
-    # mid 2 = end - (end - start)/3
-    sub $s2, $a2, $a1
-    div $s2, 3
-    mflo $s2
-    sub $s2, $a2, $s2
+    sll $t4, $t2, 2     # t4 = 4 * mid2
+    add $t4, $t4, $a0   # t4 = array + 4 * mid2
+    lw $t4, 0($t4)      # t4 = array[mid2]
 
-    # value at mid 1
-    sll $s1, $s0, 2
-    add $s1, $s1, $a0
-    lw $s1, 0($s1)
+# if key == array[mid1]
+recursive_search_mid1:
+    bne $a3, $t3, recursive_search_mid2 # if key != array[mid1], check for key == array[mid2]
+    move $v0, $t1   # if key == array[mid1], return mid1
+    b recursive_search_end
 
-    # value at mid 2
-    sll $s3, $s2, 2
-    add $s3, $s3, $a0
-    lw $s3, 0($s3)
+# else if key == array[mid2]
+recursive_search_mid2:
+    bne $a3, $t4, recursive_search_left # if key != array[mid2]
+    move $v0, $t2   # if key == array[mid2], return mid2
+    b recursive_search_end
 
-    # if key == value at mid 1
-    beq $a3, $s1, search_success_1
-
-    # if key == value at mid 2
-    beq $a3, $s3, search_success_2
-
-    # if key < value at mid 1
-    blt $a3, $s1, recursive_search_left
-
-    # if key > value at mid 2
-    bgt $a3, $s3, recursive_search_right
-
-    # if key > value at mid 1 and key < value at mid 2
-    # recursive_search(array, mid1+1, mid2-1, key)
-    # array is already in $a0
-    addi $a1, $s0, 1
-    addi $a2, $s2, -1
-    # key is already in $a3
-    jal recursive_search
-
-
+# else if key < array[mid1]
 recursive_search_left:
+    bge $a3, $t3, recursive_search_right # if key >= array[mid1]
+    
     # recursive_search(array, start, mid1 - 1, key)
-    # array is already loaded in $a0
-    lw $a1, -12($fp) # load start index in $a1
-    addi $a2, $s0, -1 # end index = mid1 - 1
-    # key is already loaded in $a3
-
+    # array address already stored in $a0
+    # start index already stored in $a1
+    sub $a2, $t1, 1 # end index = mid1 - 1
+    # key already stored in $a3
     jal recursive_search
+    b recursive_search_end
 
 recursive_search_right:
+    ble $a3, $t4, recursive_search_middle # if key <= array[mid2]
+
     # recursive_search(array, mid2 + 1, end, key)
-    # array is already loaded in $a0
-    addi $a1, $s2, 1 # start index = mid2 + 1
-    lw $a2, -16($fp) # load end index in $a2
-    # key is already loaded in $a3
-
+    # array address already stored in $a0
+    add $a1, $t2, 1 # start index = mid2 + 1
+    # end index already stored in $a2
+    # key already stored in $a3
     jal recursive_search
+    b recursive_search_end
 
-search_success_1:
-    
+recursive_search_middle:
+    # recursive_search(array, mid1 + 1, mid2 - 1, key)
+    # array address already stored in $a0
+    add $a1, $t1, 1 # start index = mid1 + 1
+    sub $a2, $t2, 1 # end index = mid2 - 1
+    # key already stored in $a3
+    jal recursive_search
+    b recursive_search_end
 
-search_success_2:
-    
+recursive_search_end:
+    lw $ra, -4($fp)     # return address is loaded from stack
 
+    addi $sp, $sp, 4    # stack is popped
+    lw $fp, 0($sp)      # frame pointer is loaded from stack
+    addi $sp, $sp, 4    # stack pointer is restored
+    jr $ra
+
+
+
+# prints the search_fail prompt
 search_fail:
+    li $v0, 1
+    move $a0, $s2   # print the key
+    syscall
+
+    li $v0, 4
+    la $a0, prompt_searchfail
+    syscall 
+
+    b function_end
+
+# end of the function
+function_end:
+
+    lw $fp, 0($sp)  # restore frame pointer
+    addi $sp, $sp, 4    # restore stack pointer
+
+    # exit from the function
+    li $v0, 10
+    syscall 
     
 # register legend for recursive_sort:
 # $a0: array address
