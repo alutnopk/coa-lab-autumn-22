@@ -90,17 +90,17 @@ read_array_loop:
     la $a0, array
     jal print_array
 
-    ; li $v0, 4
-    ; la $a0, prompt_key_confirm
-    ; syscall
+    # li $v0, 4
+    # la $a0, prompt_key_confirm
+    # syscall
 
-    ; li $v0, 1
-    ; move $a0, $s2
-    ; syscall
+    # li $v0, 1
+    # move $a0, $s2
+    # syscall
 
-    ; li $v0, 4
-    ; la $a0, newline
-    ; syscall
+    # li $v0, 4
+    # la $a0, newline
+    # syscall
 
     # The key is searched in the array
     la $a0, array   # load array address in $a0
