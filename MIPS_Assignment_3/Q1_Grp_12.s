@@ -179,8 +179,8 @@ printMatrix:
 recursiveDet:
 	# a0 is n, a1 is address of array
 	move $t0, $a0
-	# move $a0, $ra
-	# jal pushToStack
+	move $a0, $ra
+	jal pushToStack
 	move $a0, $s0
 	jal pushToStack
 	move $a0, $s1
@@ -199,7 +199,7 @@ recursiveDet:
 	# base case: A has one element
 	lw $v0, ($s1)
 	# reloading old register values from memory
-	# lw $ra, 16($sp)
+	lw $ra, 16($sp)
 	lw $s0, 12($sp)
 	lw $s1, 8($sp)
 	lw $s2, 4($sp)
@@ -264,7 +264,45 @@ recursiveDet:
 	submatrix_outer_end:
 
 	# submatrix has been populated
-	
+	addi $a0, $s0, -1
+	move $a1, $t0
+	jal recursiveDet
+
+	addi $t1, $s0, -1   # t1 = n - 1
+    mult $t1, $t1
+	mflo $t1            # t1 = (n - 1)^2
+	sll $t1, $t1, 2     # t1 *= 4
+	add $sp, $sp, $t1   # moving stack pointer; deallocating
+
+	andi $t1, $s2, 1        # t1 = j & 1 [j = s2]  
+	beq $t1, 0, eval_val    # if t1 = 0 ( j is even go to eval_val )
+
+    # if j is odd 
+	sub $v0, $zero, $v0  # det(b) = -det(b) if j is odd 
+
+	eval_val:
+		sll $t1, $s2, 2     # t1 = 4*j
+		add $t1, $s1, $t1   # t1 = &array[0][j]
+		lw  $t1,  0($t1)      # t1 = array[0][j]
+
+		mult $v0, $t1       # (-1)^j . det(b) . a[0][j]
+		mflo $v0            # v0 =  (-1)^j . a[0][j] . det(b) 
+		add $s3, $s3, $v0   # s3 += v0 ( s3 : det(A) )
+
+	addi $s2, $s2, 1        # j++
+	blt $s2, $s0, recursion_loop  # if (s2) j < (s0) n , keep looping        
+
+    move $v0, $s3               # ( return value ) v0 = det(A)
+
+	lw $ra, 16($sp)
+	lw $s0, 12($sp)
+	lw $s1, 8($sp)
+	lw $s2, 4($sp)
+	lw $s3, 0($sp)
+
+	addi $sp, $sp, 20    # deallocating by incrementing stack pointer
+
+	jr $ra    
 error_input:
 	li $v0, 4
 	la $a0, error_msg
