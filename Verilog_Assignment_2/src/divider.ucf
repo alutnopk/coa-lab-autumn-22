@@ -1,0 +1,3 @@
+net "clk" loc  = "p76";
+net "rstn" loc  = "p108";
+net "count" loc = "p139";
