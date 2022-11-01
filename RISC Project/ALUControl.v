@@ -3,7 +3,7 @@
 module ALUControl(
     input [2:0] alu_op,
     input [5:0] funct_code,
-    output [3:0] alu_control_signal
+    output reg [3:0] alu_control_signal
 );
 
 /*
