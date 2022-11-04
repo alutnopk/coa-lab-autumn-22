@@ -5,5 +5,5 @@ module Complement(
     output reg [31:0] out
 );
 
-    assign out = ~A + 1'b1;
+    assign out = ~A + 32'd1;
 endmodule
