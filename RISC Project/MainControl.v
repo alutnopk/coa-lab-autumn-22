@@ -63,7 +63,7 @@ module MainControl(
           alu_src <= 1'b1;
           alu_op <= 3'b000;
           mem_to_reg <= 2'b00;
-          reg_write <= 1'b0;
+          reg_write <= 2'b00;
           mem_read <= 1'b0;
           mem_write <= 1'b0;
           branch <= 2'b01;
@@ -73,7 +73,7 @@ module MainControl(
           alu_src <= 1'b1;
           alu_op <= 3'b000;
           mem_to_reg <= 2'b00;
-          reg_write <= 1'b0;
+          reg_write <= 2'b00;
           mem_read <= 1'b0;
           mem_write <= 1'b0;
           branch <= 2'b10;
@@ -93,7 +93,7 @@ module MainControl(
           alu_src <= 1'b0;
           alu_op <= 3'b101;
           mem_to_reg <= 2'b00;
-          reg_write <= 1'b0;
+          reg_write <= 2'b00;
           mem_read <= 1'b0;
           mem_write <= 1'b1;
           branch <= 2'b00;
@@ -115,7 +115,7 @@ module MainControl(
           alu_src <= 1'b0;
           alu_op <= 3'b111;
           mem_to_reg <= 2'b00;
-          reg_write <= 1'b1;
+          reg_write <= 2'b10;
           mem_read <= 1'b0;
           mem_write <= 1'b0;
           branch <= 2'b00;

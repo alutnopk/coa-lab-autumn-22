@@ -3,6 +3,7 @@
 module KGP_RISC(
     input clk,
     input rst,
+	 input [4:0] show_index,
     output [31:0] Register_return 
 );
 
@@ -15,7 +16,8 @@ module KGP_RISC(
     wire ALU_src;
     wire [1:0] Register_write;
     wire [3:0] ALU_control_signal;
-    wire [31:0] Output_from_ALU, Data_out, Data_write, Register1_value, Register2_value, Branching_address, immediate, ALU_input2, Program_counter_ref;
+    wire [31:0] Output_from_ALU, Data_out, Data_write, Branching_address, immediate, ALU_input2, Program_counter_ref;
+	 wire [31:0] Register1_value, Register2_value;
     wire negative, carry, zero;
 	 // sign extending immediate
     assign immediate = {{16{instruction[15]}}, instruction[15:0]};
@@ -67,6 +69,7 @@ module KGP_RISC(
         .reg_write(Register_write),
         .clk(clk),
         .rst(rst),
+		  .show_index(show_index),
         .data_write(Data_write),
         .reg1_value(Register1_value),
         .reg2_value(Register2_value),
@@ -95,19 +98,19 @@ module KGP_RISC(
         .data_write(Data_write)
     );
 	 
-	 DataMemory DM(
-		.clk(clk),
-		.enable(1),
-		.write_enable(Memory_write),
-		.addr(Output_from_ALU),
-		.din(Register2_value),
-		.dout(Data_out)
+	 Data DM(
+		.clka(clk),
+		.ena(1'b1),
+		.wea(Memory_write),
+		.addra(Output_from_ALU[10:0]),
+		.dina(Register2_value),
+		.douta(Data_out)
 	 );
 	 
-	 InstructionMemory IM(
-		.clk(clk),
-		.addr(Program_counter_next),
-		.dout(instruction)
+	 Instruction IM(
+		.clka(clk),
+		.addra(Program_counter_next[10:0]),
+		.douta(instruction)
 	 );	
 
 endmodule

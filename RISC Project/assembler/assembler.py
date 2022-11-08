@@ -103,7 +103,7 @@ def process(filename):
     print("memory_initialization_radix=2;", file = OUTPUT_FILE)
     print("memory_initialization_vector=", file = OUTPUT_FILE)
     print(f"{0:032b}", file = OUTPUT_FILE)
-    with open(filename, 'r') as f:
+    with open(f"{filename}.s", 'r') as f:
         lines = f.readlines()
         for line in lines:
             line.strip()

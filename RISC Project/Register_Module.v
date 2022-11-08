@@ -5,6 +5,7 @@ module Register_Module(
     input [4:0] reg2_index,
     input [1:0] reg_write,
     input [31:0] data_write,
+	 input [4:0] show_index,
     input clk, 
     input rst,
     output [31:0] reg1_value,
@@ -13,6 +14,7 @@ module Register_Module(
 );
 
     reg[31:0] register_list[31:0];
+	 
     always @(posedge clk) begin
         if (rst) begin
             // if the rst is high, then the registers are reset to 0
@@ -48,7 +50,7 @@ module Register_Module(
             register_list[29] <= 32'b0;
             register_list[30] <= 32'b0;
             register_list[31] <= 32'b0;
-        end else begin 
+        end else if(reg_write[0] || reg_write[1]) begin 
             case(reg_write)
                 // depending on the value of reg_write, the corresponding register is written to
                 2'b10:
@@ -61,8 +63,12 @@ module Register_Module(
             endcase
         end
     end
-
+	// always @(*) begin
+		//reg1_value = register_list[reg1_index];
+		//reg2_value = register_list[reg2_index];
+	//	reg_return = register_list[5'b00001];
+	 //end
     assign reg1_value = register_list[reg1_index];
     assign reg2_value = register_list[reg2_index];
-    assign reg_return = register_list[5'b00001];
+    assign reg_return = register_list[show_index];
 endmodule

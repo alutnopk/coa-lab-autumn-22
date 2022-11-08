@@ -18,16 +18,16 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module InstructionMemory(
-	input clk,
-	input[10:0] addr,
-	output[31:0] dout
+module Instruction(
+	input clka,
+	input[10:0] addra,
+	output[31:0] douta
     );
 
 InstructionMemory IM (
-  .clka(clk), // input clka
-  .addra(addr), // input [10 : 0] addra
-  .douta(dout) // output [31 : 0] douta
+  .clka(clka), // input clka
+  .addra(addra), // input [10 : 0] addra
+  .douta(douta) // output [31 : 0] douta
 );
 
 endmodule

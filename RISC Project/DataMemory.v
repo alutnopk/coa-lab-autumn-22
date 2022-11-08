@@ -18,22 +18,22 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module DataMemory(
-	input clk,
-	input enable,
-	input write_enable,
-	input [10:0] addr,
-	input [31:0] din,
-	output [31:0] dout
+module Data(
+	input clka,
+	input ena,
+	input wea,
+	input [10:0] addra,
+	input [31:0] dina,
+	output [31:0] douta
     );
 
 DataMemory DM (
-  .clka(clk), // input clka
-  .ena(enable), // input ena
-  .wea(write_enable), // input [0 : 0] wea
-  .addra(addr), // input [10 : 0] addra
-  .dina(din), // input [31 : 0] dina
-  .douta(dout) // output [31 : 0] douta
+  .clka(~clka), // input clka
+  .ena(ena), // input ena
+  .wea(wea), // input [0 : 0] wea
+  .addra(addra), // input [10 : 0] addra
+  .dina(dina), // input [31 : 0] dina
+  .douta(douta) // output [31 : 0] douta
 );
 
 endmodule

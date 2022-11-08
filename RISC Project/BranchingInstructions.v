@@ -29,14 +29,16 @@ module BranchingInstructions(
 
     bl                  000000       11        branch_address       pc_in + 1
 */
-wire old_neg, old_carry, old_zero;
+reg old_neg, old_carry, old_zero;
 
-
+//assign carry = rst ? 0 : carry;
+//assign negative = rst ? 0 : negative;
+//assign zero = rst ? 0 : zero;
 always @(posedge clk) begin
     if (rst) begin
-        carry <= 0;
-        negative <= 0;
-        zero <= 0;
+        // carry = 0;
+        // negative = 0;
+        // zero = 0;
     end
     else begin
         old_carry <= carry;
