@@ -15,7 +15,7 @@ module MainControl(
     Assign the values of the control signals based on the opcode
     OPCODE   ALUSrc   ALUOp   MemtoReg   RegWrite   MemRead   MemWrite   Branch
     000000   1        001     00         10          0         0          00
-    000001   1        010     00        10          0         0          00
+    000001   1        010     00         10          0         0          00
     000010   1        011     00         10          0         0          00
     000011   1        000     00         00          0         0          01
     000100   1        000     00         00          0         0          10

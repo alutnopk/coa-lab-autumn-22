@@ -3,9 +3,9 @@
 module bitwiseAND(
     input[31:0] A,
     input[31:0] B,
-    output reg [31:0] out
+    output [31:0] out
 );
 
-    and a1(out,A,B);
+    assign out = A & B;
 
 endmodule

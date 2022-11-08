@@ -17,9 +17,11 @@ module KGP_RISC(
     wire [3:0] ALU_control_signal;
     wire [31:0] Output_from_ALU, Data_out, Data_write, Register1_value, Register2_value, Branching_address, immediate, ALU_input2, Program_counter_ref;
     wire negative, carry, zero;
-
+	 // sign extending immediate
     assign immediate = {{16{instruction[15]}}, instruction[15:0]};
+	 // this will store the branch address. sign extending the same
     assign Branching_address = {{17{instruction[20]}}, instruction[20:6]};
+	 
     assign ALU_input2 = ALU_src ? Register2_value : immediate;
 
     MainControl MCU(
@@ -27,7 +29,7 @@ module KGP_RISC(
         .reg_write(Register_write),
         .mem_read(Memory_read),
         .mem_write(Memory_write),
-        .branch(Branching),
+        .branch(Branching), // 
         .mem_to_reg(Memory_to_Register),
         .alu_op(ALU_op),
         .alu_src(ALU_src)
@@ -59,7 +61,7 @@ module KGP_RISC(
         .prog_count_next(Program_counter_ref)
     );
 
-    Register_write REGF(
+    Register_Module REGF(
         .reg1_index(instruction[25:21]),
         .reg2_index(instruction[20:16]),
         .reg_write(Register_write),
@@ -85,21 +87,27 @@ module KGP_RISC(
     );
 
 
-    Mem_to_Reg_Selector MTRS(
+    Mem_To_Reg_Selector MTRS(
         .mem_to_reg(Memory_to_Register), 
         .out_from_ALU(Output_from_ALU),
         .data_out(Data_out),
         .prog_count(Program_counter_ref),
         .data_write(Data_write)
     );
-
-    
-
-
-
-
-
-
-
+	 
+	 DataMemory DM(
+		.clk(clk),
+		.enable(1),
+		.write_enable(Memory_write),
+		.addr(Output_from_ALU),
+		.din(Register2_value),
+		.dout(Data_out)
+	 );
+	 
+	 InstructionMemory IM(
+		.clk(clk),
+		.addr(Program_counter_next),
+		.dout(instruction)
+	 );	
 
 endmodule

@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module Register_write(
+module Register_Module(
     input [4:0] reg1_index,
     input [4:0] reg2_index,
     input [1:0] reg_write,
@@ -57,7 +57,7 @@ module Register_write(
                     register_list[5'b11111] <= data_write;
                 2'b11:
                     register_list[reg2_index] <= data_write;
-                default:
+                default: ;
             endcase
         end
     end

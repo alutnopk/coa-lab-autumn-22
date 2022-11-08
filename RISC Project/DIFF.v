@@ -5,19 +5,23 @@ module DIFF(
     input [31:0] B,
     output reg [31:0] out
 );
-
-    // out is the LSB at which A and B differ
-    wire[31:0] xor1;
-    assign xor1 = A ^ B;
-    wire[4:0] count;
-    assign count = 5'b0;
-    integer i;
-    for(i = 0; i <= 5'b11111; i = i + 1) begin
-        if (xor1[0] == 1'b1) break;
-        else begin
-            count = count + 1;
-            xor1 = xor1 >> 1;
-        end
-    end
-    assign out = count;
+	reg [4:0] count;
+	wire [31:0] xor1;
+	integer i;
+	assign xor1 = A ^ B;
+	initial begin
+		out = 'd32;
+		count = 5'd32;
+		i = 31;
+		for(;i >=0; i=i-1) begin
+			if ((A[i] && !B[i]) || (!A[i] && B[i])) begin
+				out = i;
+				count = count - 1;
+			end
+			else begin
+				count = count - 1;
+			end
+		end
+	end
+	
 endmodule

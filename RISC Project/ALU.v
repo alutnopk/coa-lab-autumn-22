@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 
 module ALU(
-    input signed [31:0] input1,
+    input [31:0] input1,
     input [31:0] input2,
     input [4:0] shamt,
     input [3:0] alu_control_signal,
@@ -14,9 +14,9 @@ module ALU(
     wire carry_from_sum;
     wire [31:0] sum, comp, AND, XOR, diff, sll, srl, sra;
 
-    ADD adder1(.input1(input1), .input2(input2), .sum(sum), .carry_from_sum(carry_from_sum));
+	 ADD adder1(.input1(input1), .input2(input2), .sum(sum), .carry_from_sum(carry_from_sum));
     Complement complementvalue(.A(input2), .out(comp));
-    DIFF differingbit(.A(input1), .B(input2), .out(diff));
+    //DIFF differingbit(.A(input1), .B(input2), .out(diff));
     bitwiseAND and1(.A(input1), .B(input2), .out(AND));
     bitwiseXOR xor1(.A(input1), .B(input2), .out(XOR));
     LeftShifter sll1(.A(input1), .B(input2), .alu_control_signal(alu_control_signal), .shamt(shamt), .out(sll));
@@ -24,7 +24,6 @@ module ALU(
     ArithmeticRightShifter sra1(.A(input1), .B(input2), .alu_control_signal(alu_control_signal), .shamt(shamt), .out(sra));
     
     MUX_8to1 mux(sum, comp, diff, AND, XOR, sll, srl, sra, alu_control_signal, out_from_ALU);
-
     // flags change value when the output changes
     always @(out_from_ALU) begin
         if (out_from_ALU == 32'b0) zero = 1'b1;

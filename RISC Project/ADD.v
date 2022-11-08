@@ -3,7 +3,7 @@
 module ADD(
     input [31:0] input1,
     input [31:0] input2,
-    output reg [31:0] sum,
+    output [31:0] sum,
     output carry_from_sum
 );
 
