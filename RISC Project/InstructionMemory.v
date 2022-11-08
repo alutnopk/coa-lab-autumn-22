@@ -20,13 +20,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 module InstructionMemory(
 	input clk,
-	input[10:0] addr,
+	input[31:0] addr,
 	output[31:0] dout
     );
 
 InstructionMemory IM (
   .clka(clk), // input clka
-  .addra(addr), // input [10 : 0] addra
+  .addra(addr[10:0]), // input [10 : 0] addra
   .douta(dout) // output [31 : 0] douta
 );
 

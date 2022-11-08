@@ -56,7 +56,7 @@ always @(*) begin
                         prog_count_out <= reg1_value;
                     end
                     6'b000001: begin
-                        if (negative == 1'b1) begin
+                        if (old_neg == 1'b1) begin
                             prog_count_out <= branch_address;
                         end
                         else begin
@@ -64,7 +64,7 @@ always @(*) begin
                         end
                     end
                     6'b000010: begin
-                        if (zero == 1'b1) begin
+                        if (old_zero == 1'b1) begin
                             prog_count_out <= branch_address;
                         end
                         else begin
@@ -72,7 +72,7 @@ always @(*) begin
                         end
                     end
                     6'b000011: begin
-                        if (zero == 1'b0) begin
+                        if (old_zero == 1'b0) begin
                             prog_count_out <= branch_address;
                         end
                         else begin
@@ -89,7 +89,7 @@ always @(*) begin
                         prog_count_out <= branch_address;
                     end
                     6'b000001: begin
-                        if (carry == 1'b1) begin
+                        if (old_carry == 1'b1) begin
                             prog_count_out <= branch_address;
                         end
                         else begin
@@ -97,7 +97,7 @@ always @(*) begin
                         end
                     end
                     6'b000001: begin
-                        if (carry == 1'b0) begin
+                        if (old_carry == 1'b0) begin
                             prog_count_out <= branch_address;
                         end
                         else begin
