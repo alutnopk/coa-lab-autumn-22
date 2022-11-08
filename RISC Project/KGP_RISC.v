@@ -6,24 +6,38 @@ module KGP_RISC(
 	 input [4:0] show_index,
     output [31:0] Register_return 
 );
+    // PC wires
+    wire [31:0] Program_counter, Program_counter_next, Program_counter_ref;
 
-    wire [31:0] Program_counter, Program_counter_next;
-    wire [31:0] instruction, instruction_next;
-    wire [1:0] Branching;
+    // Instruction Memory wire
+    wire [31:0] instruction;
+
+    // MCU wires
     wire Memory_read, Memory_write;
-    wire [1:0] Memory_to_Register;
+    wire [1:0] Branching, Memory_to_Register, Register_write;
     wire [2:0] ALU_op;
+
+
+    // ALU Wires
     wire ALU_src;
-    wire [1:0] Register_write;
-    wire [3:0] ALU_control_signal;
-    wire [31:0] Output_from_ALU, Data_out, Data_write, Branching_address, immediate, ALU_input2, Program_counter_ref;
-	 wire [31:0] Register1_value, Register2_value;
     wire negative, carry, zero;
-	 // sign extending immediate
+    wire [3:0] ALU_control_signal;
+    wire [31:0] Output_from_ALU, ALU_input2, immediate;
+
+    // Register File wires
+    wire [31:0] Data_write, Register1_value, Register2_value;
+    
+    //Branching wires
+    wire [31:0] Branching_address;
+    
+    // Data Memory wires
+    wire [31:0] Data_out;
+
+	// sign extending immediate
     assign immediate = {{16{instruction[15]}}, instruction[15:0]};
-	 // this will store the branch address. sign extending the same
+	// this will store the branch address. sign extending the same
     assign Branching_address = {{17{instruction[20]}}, instruction[20:6]};
-	 
+	// this will determine the 2nd input of ALU. If it is 1, then immediate else register value
     assign ALU_input2 = ALU_src ? Register2_value : immediate;
 
     MainControl MCU(
