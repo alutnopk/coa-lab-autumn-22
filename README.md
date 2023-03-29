@@ -1,4 +1,2 @@
 # coa-lab-autumn-22
-Assignment codes for Computer Organization and Architecture
-
-https://drive.google.com/file/d/11VNNz5HjZZE3XJnbfkZgOd8QGlbD1Xuc/view?usp=drivesdk
+Repository for the Computer Organization and Architecture course offered in the Autumn Semester 2022, Department of CSE, IIT Kharagpur.
